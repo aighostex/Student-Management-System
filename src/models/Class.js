@@ -17,7 +17,7 @@ const classSchema = new mongoose.Schema(
     capacity: {
       type: Number,
       min: 1,
-      max: 3,
+      max: 50,
       default: 30,
     },
 

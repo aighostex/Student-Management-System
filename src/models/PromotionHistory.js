@@ -25,6 +25,11 @@ const promotionHistorySchema = new mongoose.Schema(
       ref: "Level",
       default: null,
     },
+    fromClass: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Class",
+        default: null,
+    },
 
     promotionRule: {
       type: mongoose.Schema.Types.ObjectId,

@@ -23,3 +23,7 @@ export const courseValidation = [
     body('level').notEmpty().trim(),
     validate
 ]
+
+export const classValidation = [
+    body('capacity').notEmpty().isLength({min: 1, max: 50}).trim()
+]

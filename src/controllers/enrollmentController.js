@@ -153,6 +153,15 @@ export const createEnrollment = async (req, res) => {
           message: "Class not found",
         });
       }
+
+      
+      const classCapacity = await Enrollment.countDocuments({
+        class: classExists._id
+      })
+
+      if(classCapacity >=  classExists.capacity ){
+        return res.status().json()
+      }
     }
 
     // cheks if student has been enrolled

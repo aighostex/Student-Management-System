@@ -1,9 +1,10 @@
 import express from 'express'
 import { createClass, getClasses, getClass, updateClass, deleteClass } from '../controllers/classController.js'
+import { classValidation } from '../middlewares/validation.js'
 
 const router = express.Router()
 
-router.post('/', createClass)
+router.post('/', classValidation, createClass)
 router.get('/', getClasses)
 
 router.get('/:id', getClass)
