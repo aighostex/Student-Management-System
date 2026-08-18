@@ -20,6 +20,10 @@ export const addStudent = async (req, res) => {
             message: error.message,
             });
         }
+        res.status(400).json({
+            success: false,
+            message: error.message
+        })
     }
 };
 

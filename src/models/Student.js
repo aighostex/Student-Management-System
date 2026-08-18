@@ -22,6 +22,7 @@ const studentSchema = new mongoose.Schema(
 
     dateOfBirth: {
       type: Date,
+      required: true
     },
 
     gender: {
@@ -56,7 +57,6 @@ const studentSchema = new mongoose.Schema(
   }
 );
 
-// studentSchema.index({ school: 1, idNumber: 1, }, { unique: true, });
 
 const Student = mongoose.model("Student", studentSchema);
 

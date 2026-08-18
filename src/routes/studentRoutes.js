@@ -5,7 +5,7 @@ import { studentValidation } from '../middlewares/validation.js';
 const router = express.Router()
 
 
-router.post('/', studentValidation, addStudent)
+router.post('/', addStudent)
 router.get('/', getStudents)
 
 

@@ -154,13 +154,16 @@ export const createEnrollment = async (req, res) => {
         });
       }
 
-      
+
       const classCapacity = await Enrollment.countDocuments({
         class: classExists._id
       })
 
       if(classCapacity >=  classExists.capacity ){
-        return res.status().json()
+        return res.status(400).json({
+            success: false,
+            message: 'This class is full, create another class'
+        })
       }
     }
 
