@@ -24,12 +24,13 @@ const courseSchema = new mongoose.Schema({
     //     required: false,
     //     enum: ['First', 'Second', 'Third']
     // },
+    // school: {
+    //   type: mongoose.Schema.Types.ObjectId,
+    //   ref: "School",
+    //   required: true,
+    // },
 
-    term: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Term",
-        required: true
-    },
+    
     level: [
       {
         type: mongoose.Schema.Types.ObjectId,

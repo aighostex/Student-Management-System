@@ -1,6 +1,11 @@
 import mongoose from "mongoose";
 
 const termSchema = new mongoose.Schema({
+    // school: {
+    //    type: mongoose.Schema.Types.ObjectId,
+    //    ref: "School",
+    //    required: true,
+    // },
     academicSession: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "AcademicSession",
@@ -9,7 +14,7 @@ const termSchema = new mongoose.Schema({
 
     name: {
         type: String,
-        enum: ['[First', 'Second', 'Third'],
+        enum: ['First', 'Second', 'Third'],
         required: true
     },
 

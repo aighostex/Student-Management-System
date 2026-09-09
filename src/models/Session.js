@@ -18,15 +18,21 @@ const academicSessionSchema = new mongoose.Schema(
       required: true,
     },
 
-    // isCurrent: {
-    //   type: Boolean,
-    //   default: false,
+    // school: {
+    //   type: mongoose.Schema.Types.ObjectId,
+    //   ref: "School",
+    //   required: true,
     // },
 
-    // isClosed: {
-    //   type: Boolean,
-    //   default: false,
-    // },
+    isCurrent: {
+      type: Boolean,
+      default: false,
+    },
+
+    isClosed: {
+      type: Boolean,
+      default: false,
+    },
     status: {
         type: String,
         enum: ["upcoming", "active", "completed"],

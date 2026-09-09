@@ -1,9 +1,10 @@
 import express from "express";
 import { createLevel, getLevels, getLevel, updateLevel, deleteLevel } from "../controllers/levelController.js";
+import { protect, authorize } from "../middlewares/authMiddleware.js";
 
 const router = express.Router();
 
-router.post('/', createLevel);
+router.post('/', protect, authorize("admin"), createLevel);
 router.get('/', getLevels);
 
 

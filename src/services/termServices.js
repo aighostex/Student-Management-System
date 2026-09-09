@@ -3,6 +3,12 @@ import AcademicSession from "../models/Session.js";
 
 export const createTermsForSession = async ( sessionId,terms) => {
 
+    const session = await AcademicSession.findOne({ _id: sessionId });
+
+    if (!session) { 
+        throw new Error("Academic session not found"); 
+    }
+
     const existingTerms = await Term.countDocuments({ academicSession: sessionId });
 
     if (existingTerms > 0) {
@@ -31,10 +37,11 @@ export const createTermsForSession = async ( sessionId,terms) => {
 };
 
 
-export const getActiveTerm = async (sessionId) => {
+export const getActiveTerm = async (sessionId, schoolId) => {
 
     const term = await Term.findOne({
         academicSession: sessionId,
+        school: schoolId,
         status: "active",
     });
 
@@ -48,15 +55,21 @@ export const getActiveTerm = async (sessionId) => {
 };
 
 
-export const startTerm = async (termId) => {
+export const startTerm = async (termId, schoolId) => {
 
-    const term = await Term.findById(termId);
+    const term = await Term.findById({
+        _id:termId,
+        // school: schoolId.toString()
+});
 
     if (!term) {
         throw new Error("Term not found");
     }
 
-    const session = await AcademicSession.findById( term.academicSession );
+    const session = await AcademicSession.findById({ 
+        _id: term.academicSession,
+        school: schoolId
+     });
 
     if (!session) {
         throw new Error("Academic session not found");
@@ -80,6 +93,7 @@ export const startTerm = async (termId) => {
 
     const activeTerm = await Term.findOne({
         academicSession: term.academicSession,
+        // school: schoolId,
         status: "active",
     });
 
@@ -88,22 +102,27 @@ export const startTerm = async (termId) => {
             `The ${activeTerm.name} term is currently active`
         );
     }
+    //checks for trhe previous term
+    let previousTermName = null;
 
-    // check for previous term
-    const previousTerm = await Term.findOne({
-        academicSession: term.academicSession,
-        name: {
-            $in: term.name === "Second" ? ["First"] : term.name === "Third" ? ["Second"] : [],
-        },
-    });
+    if (term.name === "Second") { 
+        previousTermName = "First"; 
+    }
 
-    if (
-        previousTerm &&
-        previousTerm.status !== "completed"
-    ) {
-        throw new Error(
-            `The ${previousTerm.name} term must be completed first`
-        );
+    if (term.name === "Third") { 
+        previousTermName = "Second"; 
+    }
+
+    if (previousTermName) { 
+        const previousTerm = await Term.findOne({ 
+            academicSession: term.academicSession, 
+            school: schoolId, 
+            name: previousTermName, 
+        });
+
+        if ( previousTerm && previousTerm.status !== "completed" ) {
+             throw new Error( `The ${previousTerm.name} term must be completed first` );
+        } 
     }
 
     term.status = "active";
@@ -114,9 +133,9 @@ export const startTerm = async (termId) => {
 };
 
 
-export const endTerm = async (termId) => {
+export const endTerm = async (termId, schoolId) => {
 
-    const term = await Term.findById(termId);
+    const term = await Term.findById({_id: termId, school: schoolId});
 
     if (!term) {
         throw new Error("Term not found");
@@ -128,11 +147,11 @@ export const endTerm = async (termId) => {
         );
     }
 
-    if (new Date() < term.endDate) {
-        throw new Error(
-            "The term has not reached its end date"
-        );
-    }
+    // if (new Date() < term.endDate) {
+    //     throw new Error(
+    //         "The term has not reached its end date"
+    //     );
+    // }
 
     term.status = "completed";
 
@@ -143,11 +162,9 @@ export const endTerm = async (termId) => {
 
 
 
-export const completeSession = async (sessionId) => {
+export const completeSession = async (sessionId ) => {
 
-    const session = await AcademicSession.findById(
-        sessionId
-    );
+    const session = await AcademicSession.findById(sessionId );
 
     if (!session) {
         throw new Error(
@@ -157,6 +174,7 @@ export const completeSession = async (sessionId) => {
 
     const thirdTerm = await Term.findOne({
         academicSession: sessionId,
+        // school: schoolId,
         name: "Third",
     });
 

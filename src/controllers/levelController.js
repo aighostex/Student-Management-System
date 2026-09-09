@@ -5,9 +5,9 @@ import Course from "../models/Course.js";
 
 export const createLevel = async (req, res) => {
   try {
-    const { name, code, description, isGraduatingLevel } = await Level.create(req.body);
+    const { name, code, description, isGraduatingLevel } = req.body;
 
-    const existingLevel = await Level.findOne({ name })
+    const existingLevel = await Level.findOne(name)
 
     if (existingLevel) {
       return res.status(409).json({
@@ -17,7 +17,7 @@ export const createLevel = async (req, res) => {
     }
 
     const level = await Level.create({
-      name, code, description, isGraduatingLevel
+      name, code, description: description || "", isGraduatingLevel: isGraduatingLevel || false, school: req.user.school
     })
 
     res.status(201).json({ success: true, message: "Level created successfully", data: level });
@@ -30,10 +30,10 @@ export const createLevel = async (req, res) => {
     });
     }
 
-    // res.status(500).json({
-    //   success: false,
-    //   message: error.message,
-    // });
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
   }
 };
 

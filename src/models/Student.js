@@ -51,6 +51,17 @@ const studentSchema = new mongoose.Schema(
       enum: ["active", "graduated", "withdrawn", "expelled"],
       default: "active",
     },
+    school: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "School",
+      required: true,
+    },
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      unique: true,
+      sparse: true,
+    },
   },
   {
     timestamps: true,

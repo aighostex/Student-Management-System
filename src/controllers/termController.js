@@ -1,15 +1,21 @@
-import { createTermsForSession, getActiveTerm,  startTerm, endTerm } from "../services/termServices.js";
+import Term from "../models/Term.js";
+import { createTermsForSession, getActiveTerm,  startTerm, endTerm, completeSession } from "../services/termServices.js";
 
 export const createTerms = async (req, res) => {
     try {
         const { sessionId } = req.params;
+        const { terms } = req.body;
 
-        const terms = await createTermsForSession( sessionId );
+        const createdTerms = await createTermsForSession( 
+            // req.user.school,
+            sessionId,
+            terms
+        );
 
         res.status(201).json({
             success: true,
             message: "Academic session terms created",
-            data: terms,
+            data: createdTerms,
         })
 
     } catch (error) {
@@ -29,11 +35,15 @@ export const createTerms = async (req, res) => {
 
 
 
-export const getActiveTerm = async (req, res) => {
+export const activeTerm = async (req, res) => {
     try {
         const { sessionId } = req.params;
 
-        const term = await getActiveTerm( sessionId );
+        const term = await getActiveTerm( 
+            // req.user.school,
+            sessionId,
+            
+         );
 
         if (!term) {
             return res.status(404).json({
@@ -59,11 +69,14 @@ export const getActiveTerm = async (req, res) => {
 
 
 
-export const startTerm = async (req, res) => {
+export const activateTerm = async (req, res) => {
 try {
-    const { sesssionId } = req.params;
+    const { termId } = req.params;
 
-    const term = await startTerm(termId);
+    const term = await startTerm(
+        // req.user.school,
+        termId,
+    );
 
     if (!term) {
         return res.status(404).json({
@@ -77,17 +90,21 @@ try {
         message: 'Term has been activated'
     })
 } catch (error) {
-    return res.status(409).join({
+    return res.status(409).json({
         success: true,
-        message: "Term is already activated!"
+        message: error.message
     })
 }
 }
 
 
-export const endTerm = async (req, res) => {
+export const concludeTerm = async (req, res) => {
     try {
-        const term = await endTerm(termId);
+        const { termId } = req.params
+        const term = await endTerm(
+            termId,
+            // req.user.school
+        );
 
         if (!term) {
             return res.status(409).json({
@@ -96,8 +113,52 @@ export const endTerm = async (req, res) => {
             })
         }
 
-        res.status(200)
+        res.status(200).json({
+            success: true,
+            message: "Term has been ended successfully",
+            data: term,
+        })
     } catch (error) {
-        
+        return res.status(409).json({ success: false, message: error.message, });
+    }
+}
+
+
+export const endSession = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        // console.log("PARAMS:", req.params);
+        // console.log("SESSION ID:", id);
+
+        const session = await completeSession(
+            id,
+            // req.user.school
+        )
+
+        res.status(200).json({
+            success: true,
+            message: "Academic session completed successfully",
+            data: session
+        })
+    } catch (error) {
+        res.status(400).json({ success: false, message: error.message})
+    }
+}
+
+
+export const terms = async (req, res) => {
+    try {
+        const terms = await Term.find()
+
+        res.status(200).json({
+            success: true,
+            data: terms
+        })
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        })
     }
 }

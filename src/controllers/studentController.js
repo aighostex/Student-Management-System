@@ -7,7 +7,7 @@ import Student from "../models/Student.js"
 export const addStudent = async (req, res) => {
     // req.method = 'POST'
     try {
-        const student = await Student.create(req.body);
+        const student = await Student.create({...req.body, school: req.user.school});
         res.status(201).json({
             success: true,
             message: "Student created",
@@ -30,7 +30,7 @@ export const addStudent = async (req, res) => {
 export const findStudent = async(req, res)=>{
     try {
         const student = await Student.findOne(
-            {_id: req.params.id}
+            {_id: req.params.id, school: req.user.school}
         );
 
         if (!student) {
@@ -59,6 +59,7 @@ export const getStudents = async (req,  res)=>{
         const student = await Student.find().sort({createdAt: -1})
         res.status(200).json({
             success: true,
+            count: student.length,
             data: student
         })
     } catch (error) {
@@ -75,7 +76,7 @@ export const getStudents = async (req,  res)=>{
 export const updateStudent = async(req, res)=>{
     try {
        const student = await Student.findOneAndUpdate(
-        {_id: req.params.id}, req.body, { returnDocument: "after", upsert: true }
+        {_id: req.params.id }, req.body, { returnDocument: "after", upsert: true }
        );
        
        res.status(200).json({
@@ -98,7 +99,7 @@ export const updateStudent = async(req, res)=>{
 export const deleteStudent = async(req, res)=>{
     try {
         const student = await Student.findOneAndDelete(
-            {_id: req.params.id}
+            {_id: req.params.id, school:req.user.school}
         );
         if (!student) {
             return res.status(400).json({

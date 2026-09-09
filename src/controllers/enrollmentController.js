@@ -31,6 +31,29 @@ export const getEnrollments = async (req, res) => {
   }
 };
 
+export const getEnrollment = async(req, res)=>{
+  try {
+    const enrollment = await Enrollment.findOne({_id: req.params.id})
+     if (!enrollment) {
+            return res.status(404).json({
+                success: false,
+                message: 'Enrollment not found!'
+            })
+        }
+
+        res.status(200).json({
+            success: true,
+            message:'Successfull',
+            data: enrollment
+        })
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message
+    })
+  }
+}
+
 
 
 //get a student's enrolled courses
