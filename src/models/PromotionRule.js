@@ -2,6 +2,12 @@ import mongoose from "mongoose";
 
 const promotionRuleSchema = new mongoose.Schema(
   {
+    // school: {
+    //   type: mongoose.Schema.Types.ObjectId,
+    //   ref: "School",
+    //   required: true,
+    // },
+
     academicSession: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "AcademicSession",
@@ -25,7 +31,7 @@ const promotionRuleSchema = new mongoose.Schema(
       required: true,
       min: 0,
       max: 100,
-      default: 65,
+      default: 70,
     },
 
     minimumAverage: {

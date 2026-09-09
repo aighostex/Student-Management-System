@@ -13,11 +13,7 @@ export const createSession = async (req, res) => {
       });
     }
 
-    const session = await AcademicSession.create({
-      name,
-      startDate,
-      endDate,
-    });
+    const session = await AcademicSession.create({ ...req.body, school: req.user.school });
 
     res.status(201).json({
       success: true,
@@ -55,7 +51,7 @@ export const getAcademicSessions = async (req, res) => {
 
 export const getAcademicSession = async (req, res) => {
   try {
-    const session = await AcademicSession.findById(req.params.id);
+    const session = await AcademicSession.findById({_id:req.params.id, school: req.user.school,});
 
     if (!session) {
      return res.status(404).json({
@@ -84,7 +80,7 @@ export const updateAcademicSession = async (req, res) => {
     const session = await AcademicSession.findByIdAndUpdate(
       req.params.id,
       req.body,
-      { returnDocument: "after", upsert: true }
+      { returnDocument: "after", upsert: false }
     );
 
     if (!session) {
@@ -111,7 +107,7 @@ export const updateAcademicSession = async (req, res) => {
 
 export const deleteSession = async (req, res) => {
     try {
-        const session = await AcademicSession.findByIdAndDelete( req.params.id )
+        const session = await AcademicSession.findByIdAndDelete( {_id:req.params.id, school: req.user.school,} )
 
         if (!session) {
             return res.status(404).json({

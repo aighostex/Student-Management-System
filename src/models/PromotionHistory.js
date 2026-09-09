@@ -31,11 +31,11 @@ const promotionHistorySchema = new mongoose.Schema(
         default: null,
     },
 
-    promotionRule: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "PromotionRule",
-      required: true,
-    },
+    // promotionRule: {
+    //   type: mongoose.Schema.Types.ObjectId,
+    //   ref: "PromotionRule",
+    //   required: true,
+    // },
 
     status: {
       type: String,

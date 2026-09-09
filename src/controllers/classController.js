@@ -1,9 +1,12 @@
 import Class from "../models/Class.js";
+import Level from "../models/Level.js";
 
 export const createClass = async (req, res) => {
   try {
     const { level, name, code, capacity } = req.body;
 
+    // const levelExists = await Level.findById(level)
+ 
     const existingClass = await Class.findOne({ level, name });
 
     if (existingClass) {
@@ -16,7 +19,7 @@ export const createClass = async (req, res) => {
     const newClass = await Class.create({
       level,
       name,
-      code,
+      code: level.code,
       capacity,
     });
 
@@ -95,7 +98,7 @@ export const updateClass = async (req, res) => {
       req.body,
       {
         returnDocument: "after",
-        upsert: true
+        upsert: false
       }
     ).populate("level", "name code");
 

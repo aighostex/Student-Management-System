@@ -1,4 +1,4 @@
-import PromotionHistory from "../models/PromotionHistory.js";
+import PromotionHistory from "../models/promotionHistory.js";
 
 
 // Get all promotion history

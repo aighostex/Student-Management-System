@@ -24,6 +24,13 @@ const levelSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+
+    // school: {
+    //   type: mongoose.Schema.Types.ObjectId,
+    //   ref: "School",
+    //   required: true,
+    // },
+
     course: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Course",

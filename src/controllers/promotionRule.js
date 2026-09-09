@@ -1,116 +1,29 @@
 import PromotionRule from "../models/PromotionRule.js";
 import Level from "../models/Level.js";
+import { createPromotionRules } from "../services/ruleService.js";
 
 
-// Create promotion rule
+
+
 export const createPromotionRule = async (req, res) => {
   try {
-    const {
-      fromLevel,
-      toLevel,
-      minimumAverage,
-      maximumFailedCourses,
-      requiresApproval,
-    } = req.body;
+    const rules = Array.isArray(req.body) ? req.body : [req.body];
 
-    if (!fromLevel || !toLevel) {
-      return res.status(400).json({
-        success: false,
-        message: "From level and to level are required",
-      });
-    }
+    const created = await createPromotionRules(rules);
 
-    if (fromLevel === toLevel) {
-      return res.status(400).json({
-        success: false,
-        message:
-          "From level and to level cannot be the same",
-      });
-    }
-
-    const sourceLevel = await Level.findById(fromLevel);
-
-    if (!sourceLevel) {
-      return res.status(404).json({
-        success: false,
-        message: "Source level not found",
-      });
-    }
-
-    const destinationLevel =
-      await Level.findById(toLevel);
-
-    if (!destinationLevel) {
-      return res.status(404).json({
-        success: false,
-        message: "Destination level not found",
-      });
-    }
-
-    // Prevent multiple active rules for same source level
-    const existingRule =
-      await PromotionRule.findOne({
-        fromLevel,
-        active: true,
-      });
-
-    if (existingRule) {
-      return res.status(409).json({
-        success: false,
-        message:
-          "An active promotion rule already exists for this level",
-      });
-    }
-
-    if (
-      minimumAverage !== undefined &&
-      (minimumAverage < 0 || minimumAverage > 100)
-    ) {
-      return res.status(400).json({
-        success: false,
-        message:
-          "Minimum average must be between 0 and 100",
-      });
-    }
-
-    if (
-      maximumFailedCourses !== undefined &&
-      maximumFailedCourses < 0
-    ) {
-      return res.status(400).json({
-        success: false,
-        message:
-          "Maximum failed courses cannot be negative",
-      });
-    }
-
-    const rule = await PromotionRule.create({
-      fromLevel,
-      toLevel,
-      minimumAverage,
-      maximumFailedCourses,
-      requiresApproval:
-        requiresApproval ?? false,
-      active: true,
-    });
-
-    const populatedRule =
-      await PromotionRule.findById(rule._id)
-        .populate("fromLevel", "name code")
-        .populate("toLevel", "name code");
-
-    return res.status(201).json({
+    res.status(201).json({
       success: true,
-      message: "Promotion rule created successfully",
-      data: populatedRule,
+      message: `${created.length} promotion rule(s) created successfully`,
+      data: created,
     });
   } catch (error) {
-    return res.status(500).json({
+    res.status(400).json({
       success: false,
       message: error.message,
     });
   }
 };
+
 
 
 // Get all promotion rules
@@ -121,7 +34,6 @@ export const getPromotionRules = async (req, res) => {
     if (req.query.fromLevel) {
       filter.fromLevel = req.query.fromLevel;
     }
-
     if (req.query.toLevel) {
       filter.toLevel = req.query.toLevel;
     }

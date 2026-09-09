@@ -1,8 +1,10 @@
-import { runPromotion } from "../services/promotionService.js";
+import { runPromotion } from "../services/promotion.service.js";
 
 export const runPromotionController = async (req, res) => {
     try {
         const { sessionId } = req.params;
+        // console.log("PARAMS:", req.params);
+        // console.log("SESSION ID:", sessionId);
 
         const result = await runPromotion(sessionId);
 

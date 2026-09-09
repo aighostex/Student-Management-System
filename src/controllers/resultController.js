@@ -2,12 +2,13 @@ import Result from "../models/Result.js";
 import Enrollment from "../models/Enrolment.js";
 import Course from "../models/Course.js";
 import Term from "../models/Term.js";
+import Student from "../models/Student.js";
 
 
 // Create result
 export const createResult = async (req, res) => {
   try {
-    const { enrollment, course, score } = req.body;
+    const { student, enrollment, course, score } = req.body;
 
     const enrollmentExists = await Enrollment.findById(enrollment);
 
@@ -39,6 +40,7 @@ export const createResult = async (req, res) => {
     }
 
     const existingResult = await Result.findOne({
+      student,
       enrollment,
       course,
       term: activeTerm._id,
@@ -53,6 +55,7 @@ export const createResult = async (req, res) => {
     }
 
     const result = await Result.create({
+      student,
       enrollment,
       course,
       score,
@@ -101,8 +104,8 @@ export const getResults = async (req, res) => {
       filter.course = req.query.course;
     }
 
-    if (req.query.semester) {
-      filter.semester = req.query.semester;
+    if (req.query.term) {
+      filter.semester = req.query.term;
     }
 
     const results = await Result.find(filter)
@@ -113,7 +116,7 @@ export const getResults = async (req, res) => {
       .populate(
         "course",
         "courseTitle courseCode passMark"
-      )
+      ).populate( "term", "name startDate endDate status" )
       .sort({ createdAt: -1 });
 
     return res.status(200).json({
@@ -135,7 +138,8 @@ export const getResult = async (req, res) => {
   try {
     const result = await Result.findById(req.params.id)
       .populate( "enrollment", "student academicSession level class")
-      .populate( "course", "courseTitle courseCode passMark" );
+      .populate( "course", "courseTitle courseCode passMark" )
+      .populate( "term", "name startDate endDate status" );
 
     if (!result) {
       return res.status(404).json({

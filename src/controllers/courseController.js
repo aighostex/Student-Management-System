@@ -3,7 +3,7 @@ import Course from "../models/Course.js";
 //create course
 export const createCourse = async(req, res)=>{
     try {
-        const{ courseTitle, courseCode, passMark, department } = (req.body)
+        const{ courseTitle, courseCode, passMark, department, level } = (req.body)
 
         const existingCourse = await Course.findOne({ courseCode
         })
@@ -16,7 +16,7 @@ export const createCourse = async(req, res)=>{
         }
 
         const course = await Course.create({
-            courseTitle, courseCode, passMark, department: department || null
+            courseTitle, courseCode, passMark, department: department || null, level, school: req.user.school
         })
 
         res.status(201).json({
@@ -31,6 +31,10 @@ export const createCourse = async(req, res)=>{
             message: error.message
         })
       }
+      res.status(500).json({
+        success: false,
+        message: error.message
+      })
     }
 }
 
